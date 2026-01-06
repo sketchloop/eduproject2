@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Curriculum | PathLift</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"></span>
+        <span class="brand-name">PathLift</span>
+      </a>
+      <nav>
+        <div class="nav-links">
+          <a href="curriculum.html" aria-current="page">Curriculum</a>
+          <a href="about.html">About</a>
+          <a href="employers.html">Employers</a>
+          <a href="faq.html">FAQ</a>
+          <a href="contact.html">Contact</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <h1>Curriculum Overview</h1>
+      <p class="muted">Our curriculum is divided into multiple tracks so learners can choose their path.</p>
+
+      <div id="trackList" class="grid grid-2 space-md"></div>
+    </div>
+  </main>
+
+  <script src="assets/lessons.js"></script>
+  <script>
+    const container = document.getElementById("trackList");
+
+    PATHLIFT_TRACKS.forEach(track => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const h3 = document.createElement("h3");
+      h3.textContent = track.name;
+      card.appendChild(h3);
+
+      const p = document.createElement("p");
+      p.className = "muted";
+      p.textContent = track.description;
+      card.appendChild(p);
+
+      const ul = document.createElement("ul");
+      ul.className = "checklist";
+
+      track.lessons.forEach(lesson => {
+        const li = document.createElement("li");
+        const icon = document.createElement("span");
+        icon.className = "icon";
+        icon.textContent = "•";
+        const span = document.createElement("span");
+        span.textContent = lesson.title;
+        li.appendChild(icon);
+        li.appendChild(span);
+        ul.appendChild(li);
+      });
+
+      card.appendChild(ul);
+      container.appendChild(card);
+    });
+  </script>
+</body>
+</html>
