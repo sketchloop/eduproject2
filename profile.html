@@ -43,36 +43,50 @@
   </main>
 
   <script>
-    const user = Pathlift.requireUser();
-    document.getElementById("name").textContent = user.name;
-    document.getElementById("email").textContent = user.email;
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = Pathlift.requireUser();
+      document.getElementById("name").textContent = user.name;
+      document.getElementById("email").textContent = user.email;
 
-    const progress = Pathlift.getProgress();
-    const list = document.getElementById("progressList");
+      const progress = Pathlift.getProgress();
+      const list = document.getElementById("progressList");
 
-    PATHLIFT_TRACKS.forEach(track => {
-      const completed = track.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
-      const total = track.lessons.length;
+      if (typeof PATHLIFT_TRACKS === "undefined") {
+        const li = document.createElement("li");
+        const icon = document.createElement("span");
+        icon.className = "icon";
+        icon.textContent = "•";
+        const span = document.createElement("span");
+        span.textContent = "Curriculum not loaded. Check assets/lessons.js.";
+        li.appendChild(icon);
+        li.appendChild(span);
+        list.appendChild(li);
+      } else {
+        PATHLIFT_TRACKS.forEach(track => {
+          const completed = track.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
+          const total = track.lessons.length;
 
-      const li = document.createElement("li");
-      const icon = document.createElement("span");
-      icon.className = "icon";
-      icon.textContent = completed === total ? "✓" : "•";
-      const span = document.createElement("span");
-      span.textContent = `${track.name}: ${completed} of ${total} lessons completed`;
-      li.appendChild(icon);
-      li.appendChild(span);
-      list.appendChild(li);
-    });
-
-    document.getElementById("resetBtn").addEventListener("click", () => {
-      if (confirm("Reset all progress on this device? This cannot be undone.")) {
-        localStorage.removeItem("pathliftProgress");
-        localStorage.removeItem("pathliftCurrentLesson");
-        localStorage.removeItem("pathliftCurrentQuiz");
-        alert("Progress reset. Reloading.");
-        window.location.reload();
+          const li = document.createElement("li");
+          const icon = document.createElement("span");
+          icon.className = "icon";
+          icon.textContent = completed === total ? "✓" : "•";
+          const span = document.createElement("span");
+          span.textContent = `${track.name}: ${completed} of ${total} lessons completed`;
+          li.appendChild(icon);
+          li.appendChild(span);
+          list.appendChild(li);
+        });
       }
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        if (confirm("Reset all progress on this device? This cannot be undone.")) {
+          localStorage.removeItem("pathliftProgress");
+          localStorage.removeItem("pathliftCurrentLesson");
+          localStorage.removeItem("pathliftCurrentQuiz");
+          alert("Progress reset. Reloading.");
+          window.location.reload();
+        }
+      });
     });
   </script>
 </body>
