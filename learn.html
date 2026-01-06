@@ -5,27 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Learning Dashboard | PathLift</title>
 
-  <!-- STYLES -->
   <link rel="stylesheet" href="assets/styles.css" />
-
-  <!-- LOAD CURRICULUM FIRST -->
   <script defer src="assets/lessons.js"></script>
-
-  <!-- LOAD PLATFORM LOGIC -->
   <script defer src="assets/main.js"></script>
 </head>
-
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
 
-  <!-- HEADER -->
   <header class="header">
     <div class="container nav">
       <a class="brand" href="index.html">
         <span class="brand-logo"></span>
         <span class="brand-name">PathLift</span>
       </a>
-
       <nav>
         <div class="nav-links">
           <a href="learn.html" aria-current="page">Dashboard</a>
@@ -35,118 +27,105 @@
     </div>
   </header>
 
-  <!-- MAIN -->
   <main id="main" class="section">
     <div class="container">
-
-      <!-- USER CARD -->
       <div class="card">
         <h1>Welcome, <span id="username"></span></h1>
         <p class="muted">Choose a track and start learning. Your progress is saved on this device.</p>
       </div>
 
-      <!-- TRACKS WILL BE INSERTED HERE -->
       <div id="tracks" class="grid grid-2 space-md"></div>
-
     </div>
   </main>
 
-  <!-- SCRIPT TO RENDER TRACKS -->
   <script>
-    /****************************************************
-     * 1. ENSURE USER EXISTS
-     ****************************************************/
-    const user = Pathlift.requireUser();
-    document.getElementById("username").textContent = user.name;
+    // Wait until scripts are loaded
+    document.addEventListener("DOMContentLoaded", () => {
+      try {
+        const user = Pathlift.requireUser();
+        document.getElementById("username").textContent = user.name;
 
-    /****************************************************
-     * 2. ENSURE TRACK DATA EXISTS
-     ****************************************************/
-    if (typeof PATHLIFT_TRACKS === "undefined") {
-      const container = document.getElementById("tracks");
-      container.innerHTML = `
-        <div class="card">
-          <h3>Error: Curriculum not loaded</h3>
-          <p class="muted">Make sure <code>assets/lessons.js</code> exists and is linked correctly.</p>
-        </div>
-      `;
-      throw new Error("PATHLIFT_TRACKS missing — lessons.js did not load.");
-    }
+        const tracksContainer = document.getElementById("tracks");
 
-    /****************************************************
-     * 3. RENDER TRACKS + LESSONS
-     ****************************************************/
-    const tracksContainer = document.getElementById("tracks");
-    const progress = Pathlift.getProgress();
+        if (typeof PATHLIFT_TRACKS === "undefined") {
+          tracksContainer.innerHTML = `
+            <div class="card">
+              <h3>Curriculum not loaded</h3>
+              <p class="muted">Make sure <code>assets/lessons.js</code> exists and is linked correctly.</p>
+            </div>
+          `;
+          return;
+        }
 
-    PATHLIFT_TRACKS.forEach(track => {
-      const totalLessons = track.lessons.length;
-      const completed = track.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
-      const percent = Math.round((completed / totalLessons) * 100);
+        const progress = Pathlift.getProgress();
 
-      // TRACK CARD
-      const card = document.createElement("div");
-      card.className = "card";
+        PATHLIFT_TRACKS.forEach(track => {
+          const totalLessons = track.lessons.length;
+          const completed = track.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
+          const percent = Math.round((completed / totalLessons) * 100);
 
-      // TITLE
-      const h3 = document.createElement("h3");
-      h3.textContent = track.name;
-      card.appendChild(h3);
+          const card = document.createElement("div");
+          card.className = "card";
 
-      // DESCRIPTION
-      const p = document.createElement("p");
-      p.className = "muted";
-      p.textContent = track.description;
-      card.appendChild(p);
+          const h3 = document.createElement("h3");
+          h3.textContent = track.name;
+          card.appendChild(h3);
 
-      // PROGRESS BAR
-      const barOuter = document.createElement("div");
-      barOuter.className = "progress-bar";
+          const p = document.createElement("p");
+          p.className = "muted";
+          p.textContent = track.description;
+          card.appendChild(p);
 
-      const barInner = document.createElement("div");
-      barInner.className = "progress-fill";
-      barInner.style.width = percent + "%";
+          const barOuter = document.createElement("div");
+          barOuter.className = "progress-bar";
 
-      barOuter.appendChild(barInner);
-      card.appendChild(barOuter);
+          const barInner = document.createElement("div");
+          barInner.className = "progress-fill";
+          barInner.style.width = percent + "%";
+          barOuter.appendChild(barInner);
+          card.appendChild(barOuter);
 
-      // PROGRESS TEXT
-      const small = document.createElement("small");
-      small.className = "muted";
-      small.textContent = `${completed} of ${totalLessons} lessons completed`;
-      card.appendChild(small);
+          const small = document.createElement("small");
+          small.className = "muted";
+          small.textContent = `${completed} of ${totalLessons} lessons completed`;
+          card.appendChild(small);
 
-      // LESSON LIST
-      const list = document.createElement("ul");
-      list.className = "checklist space-md";
+          const list = document.createElement("ul");
+          list.className = "checklist space-md";
 
-      track.lessons.forEach(lesson => {
-        const li = document.createElement("li");
+          track.lessons.forEach(lesson => {
+            const li = document.createElement("li");
+            const icon = document.createElement("span");
+            icon.className = "icon";
+            icon.textContent = Pathlift.isLessonComplete(lesson.id) ? "✓" : "•";
+            const span = document.createElement("span");
+            span.textContent = lesson.title;
+            li.appendChild(icon);
+            li.appendChild(span);
 
-        const icon = document.createElement("span");
-        icon.className = "icon";
-        icon.textContent = Pathlift.isLessonComplete(lesson.id) ? "✓" : "•";
+            li.style.cursor = "pointer";
+            li.addEventListener("click", () => {
+              Pathlift.setCurrentLesson(lesson.id);
+              window.location.href = "lesson.html";
+            });
 
-        const span = document.createElement("span");
-        span.textContent = lesson.title;
+            list.appendChild(li);
+          });
 
-        li.appendChild(icon);
-        li.appendChild(span);
-
-        // CLICK HANDLER
-        li.style.cursor = "pointer";
-        li.addEventListener("click", () => {
-          Pathlift.setCurrentLesson(lesson.id);
-          window.location.href = "lesson.html";
+          card.appendChild(list);
+          tracksContainer.appendChild(card);
         });
-
-        list.appendChild(li);
-      });
-
-      card.appendChild(list);
-      tracksContainer.appendChild(card);
+      } catch (err) {
+        console.error(err);
+        const tracksContainer = document.getElementById("tracks");
+        tracksContainer.innerHTML = `
+          <div class="card">
+            <h3>Something went wrong</h3>
+            <p class="muted">Check the browser console for details.</p>
+          </div>
+        `;
+      }
     });
   </script>
-
 </body>
 </html>
