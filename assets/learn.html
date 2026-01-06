@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Learning Dashboard | PathLift</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script defer src="assets/lessons.js"></script>
+  <script defer src="assets/main.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"></span>
+        <span class="brand-name">PathLift</span>
+      </a>
+      <nav>
+        <div class="nav-links">
+          <a href="learn.html" aria-current="page">Dashboard</a>
+          <a href="profile.html">Profile</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="section">
+    <div class="container">
+      <div class="card">
+        <h1>Welcome, <span id="username"></span></h1>
+        <p class="muted">Choose a track and start where you are. Your progress is saved on this device.</p>
+      </div>
+
+      <div id="tracks" class="grid grid-2 space-md"></div>
+    </div>
+  </main>
+
+  <script>
+    const user = Pathlift.requireUser();
+    document.getElementById("username").textContent = user.name;
+
+    const tracksContainer = document.getElementById("tracks");
+    const progress = Pathlift.getProgress();
+
+    PATHLIFT_TRACKS.forEach(track => {
+      const totalLessons = track.lessons.length;
+      const completed = track.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
+      const percent = Math.round((completed / totalLessons) * 100);
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const h3 = document.createElement("h3");
+      h3.textContent = track.name;
+      card.appendChild(h3);
+
+      const p = document.createElement("p");
+      p.className = "muted";
+      p.textContent = track.description;
+      card.appendChild(p);
+
+      const barOuter = document.createElement("div");
+      barOuter.style.background = "#111827";
+      barOuter.style.borderRadius = "999px";
+      barOuter.style.overflow = "hidden";
+      barOuter.style.margin = "0.5rem 0";
+      barOuter.style.height = "8px";
+
+      const barInner = document.createElement("div");
+      barInner.style.height = "100%";
+      barInner.style.width = percent + "%";
+      barInner.style.background = "#22c55e";
+      barOuter.appendChild(barInner);
+
+      card.appendChild(barOuter);
+
+      const small = document.createElement("small");
+      small.className = "muted";
+      small.textContent = `${completed} of ${totalLessons} lessons completed`;
+      card.appendChild(small);
+
+      const list = document.createElement("ul");
+      list.className = "checklist space-md";
+
+      track.lessons.forEach(lesson => {
+        const li = document.createElement("li");
+        const icon = document.createElement("span");
+        icon.className = "icon";
+        icon.textContent = Pathlift.isLessonComplete(lesson.id) ? "✓" : "•";
+        const span = document.createElement("span");
+        span.textContent = lesson.title;
+        li.appendChild(icon);
+        li.appendChild(span);
+
+        li.style.cursor = "pointer";
+        li.addEventListener("click", () => {
+          Pathlift.setCurrentLesson(lesson.id);
+          window.location.href = "lesson.html";
+        });
+
+        list.appendChild(li);
+      });
+
+      card.appendChild(list);
+      tracksContainer.appendChild(card);
+    });
+  </script>
+</body>
+</html>
