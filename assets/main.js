@@ -1,7 +1,7 @@
 // assets/main.js
 // Handles nav, user, tracks, lessons, and progress
 
-// Simple mobile nav (if you keep the button)
+// Simple mobile nav (if you add a toggle later)
 document.addEventListener("click", (e) => {
   const toggle = e.target.closest("[data-nav-toggle]");
   if (!toggle) return;
@@ -61,11 +61,12 @@ function getCurrentQuizId() {
   return localStorage.getItem("pathliftCurrentQuiz");
 }
 
-// Expose globally for inline handlers
+// Expose globally for inline handlers and other pages
 window.Pathlift = {
   getUser,
   requireUser,
   getProgress,
+  saveProgress,
   markLessonComplete,
   isLessonComplete,
   setCurrentLesson,
