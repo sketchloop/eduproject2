@@ -30,10 +30,14 @@
     <div class="container card">
       <h1 id="quizTitle">Quiz</h1>
       <form id="quizForm" class="space-md"></form>
+
       <div class="space-md">
         <button class="btn" type="submit" form="quizForm">Submit quiz</button>
-        <button class="btn secondary" type="button" onclick="window.location.href='learn.html'">Back to dashboard</button>
+        <button class="btn secondary" type="button" onclick="window.location.href='learn.html'">
+          Back to dashboard
+        </button>
       </div>
+
       <p id="quizResult" class="space-md muted"></p>
     </div>
   </main>
@@ -48,12 +52,13 @@
         return;
       }
 
+      // Quizzes keyed by the SIMPLE lesson IDs
       const QUIZZES = {
-        "life-1": [
+        foundations: [
           {
-            q: "What’s the main goal of building a routine?",
+            q: "What is the main purpose of building a daily routine?",
             options: [
-              "To control every minute of your life",
+              "To control every second of your life",
               "To create a stable base you can build on",
               "To impress other people",
               "To avoid doing hard things"
@@ -61,9 +66,9 @@
             correct: 1
           }
         ],
-        "digital-1": [
+        digital: [
           {
-            q: "Which email looks most professional?",
+            q: "Which email address looks most professional?",
             options: [
               "xX420gOdXx@gmail.com",
               "cutie_baby_99@yahoo.com",
@@ -73,7 +78,7 @@
             correct: 2
           }
         ],
-        "workplace-1": [
+        workplace: [
           {
             q: "What’s a good response if you don’t understand instructions?",
             options: [
@@ -85,14 +90,62 @@
             correct: 2
           }
         ],
-        "career-3": [
+        career: [
           {
-            q: "What’s a realistic first step toward working at a company like Apple?",
+            q: "What’s a realistic first step toward a better job?",
             options: [
-              "Demand a senior engineer job immediately",
-              "Build skills in customer service, tech comfort, and reliability",
+              "Demand a senior role immediately",
+              "Build skills and update your resume",
               "Wait until you feel 100% ready",
               "Give up because it’s too hard"
+            ],
+            correct: 1
+          }
+        ],
+        tech: [
+          {
+            q: "What’s one core part of tech support work?",
+            options: [
+              "Guessing what’s wrong",
+              "Blaming the user",
+              "Systematic troubleshooting and clear communication",
+              "Ignoring documentation"
+            ],
+            correct: 2
+          }
+        ],
+        ops: [
+          {
+            q: "What’s a key skill in operations & logistics?",
+            options: [
+              "Random guessing",
+              "Keeping things organized and on schedule",
+              "Avoiding checklists",
+              "Never writing anything down"
+            ],
+            correct: 1
+          }
+        ],
+        life: [
+          {
+            q: "What’s a helpful first step in building stability?",
+            options: [
+              "Doing everything at once",
+              "Creating a simple, realistic routine",
+              "Ignoring your schedule",
+              "Waiting for motivation"
+            ],
+            correct: 1
+          }
+        ],
+        customer: [
+          {
+            q: "What’s a core part of good customer service?",
+            options: [
+              "Winning every argument",
+              "Listening and trying to understand the customer",
+              "Talking over the customer",
+              "Ignoring complaints"
             ],
             correct: 1
           }
@@ -109,6 +162,7 @@
         return;
       }
 
+      // Render questions
       quiz.forEach((item, index) => {
         const wrapper = document.createElement("div");
         wrapper.className = "space-md";
@@ -120,10 +174,12 @@
         item.options.forEach((opt, i) => {
           const label = document.createElement("label");
           label.style.display = "block";
+
           const input = document.createElement("input");
           input.type = "radio";
           input.name = "q" + index;
           input.value = i;
+
           label.appendChild(input);
           label.append(" " + opt);
           wrapper.appendChild(label);
@@ -132,6 +188,7 @@
         form.appendChild(wrapper);
       });
 
+      // Handle submit
       form.addEventListener("submit", (e) => {
         e.preventDefault();
 
@@ -145,7 +202,7 @@
 
         const score = Math.round((correctCount / quiz.length) * 100);
         document.getElementById("quizResult").textContent =
-          `You scored ${score}%. ${score >= 70 ? "Nice work — that’s a solid understanding." : "Keep going — review the lesson and try again."}`;
+          `You scored ${score}%. ${score >= 70 ? "Nice work — that’s a solid understanding." : "Review the lesson and try again."}`;
 
         const progress = Pathlift.getProgress();
         progress.quizScores[quizId] = score;
