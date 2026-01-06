@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lesson | PathLift</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <script defer src="assets/lessons.js"></script>
+  <script defer src="assets/main.js"></script>
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="header">
+    <div class="container nav">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"></span>
+        <span class="brand-name">PathLift</span>
+      </a>
+      <nav>
+        <div class="nav-links">
+          <a href="learn.html">Dashboard</a>
+          <a href="profile.html">Profile</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="section">
+    <div class="container card">
+      <h1 id="lessonTitle">Lesson</h1>
+      <p class="muted" id="lessonTrack"></p>
+
+      <ol id="steps" class="space-md"></ol>
+
+      <div class="space-md">
+        <label for="reflection"><strong>Reflection</strong></label>
+        <textarea id="reflection" rows="4" placeholder="Write your thoughts here (stays on this device only)."></textarea>
+      </div>
+
+      <div class="space-md">
+        <button class="btn" id="completeBtn">Mark lesson complete</button>
+        <button class="btn secondary" id="quizBtn">Take quiz</button>
+        <button class="btn secondary" onclick="window.location.href='learn.html'">Back to dashboard</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    Pathlift.requireUser();
+
+    const lessonId = Pathlift.getCurrentLessonId();
+    if (!lessonId) window.location.href = "learn.html";
+
+    let currentLesson = null;
+    let currentTrack = null;
+
+    for (const track of PATHLIFT_TRACKS) {
+      const found = track.lessons.find(l => l.id === lessonId);
+      if (found) {
+        currentLesson = found;
+        currentTrack = track;
+        break;
+      }
+    }
+
+    if (!currentLesson) window.location.href = "learn.html";
+
+    document.getElementById("lessonTitle").textContent = currentLesson.title;
+    document.getElementById("lessonTrack").textContent = currentTrack.name;
+
+    const stepsList = document.getElementById("steps");
+    currentLesson.steps.forEach((step, index) => {
+      const li = document.createElement("li");
+      li.textContent = step;
+      stepsList.appendChild(li);
+    });
+
+    const reflectionBox = document.getElementById("reflection");
+    const reflectionKey = "pathliftReflection_" + lessonId;
+    const savedReflection = localStorage.getItem(reflectionKey);
+    if (savedReflection) reflectionBox.value = savedReflection;
+
+    reflectionBox.addEventListener("input", () => {
+      localStorage.setItem(reflectionKey, reflectionBox.value);
+    });
+
+    document.getElementById("completeBtn").addEventListener("click", () => {
+      Pathlift.markLessonComplete(lessonId);
+      alert("Nice work. Lesson marked as complete on this device.");
+    });
+
+    document.getElementById("quizBtn").addEventListener("click", () => {
+      Pathlift.setCurrentQuiz(lessonId);
+      window.location.href = "quiz.html";
+    });
+  </script>
+</body>
+</html>
