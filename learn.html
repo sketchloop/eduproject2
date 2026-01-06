@@ -9,9 +9,8 @@
   <script defer src="assets/lessons.js"></script>
   <script defer src="assets/main.js"></script>
 </head>
-<body>
-  <a href="#main" class="skip-link">Skip to content</a>
 
+<body>
   <header class="header">
     <div class="container nav">
       <a class="brand" href="index.html">
@@ -27,11 +26,11 @@
     </div>
   </header>
 
-  <main id="main" class="section">
+  <main class="section">
     <div class="container">
       <div class="card">
         <h1>Welcome, <span id="username"></span></h1>
-        <p class="muted">Choose a track and start learning. Your progress is saved on this device.</p>
+        <p class="muted">Choose a track and start learning.</p>
       </div>
 
       <div id="tracks" class="grid grid-2 space-md"></div>
@@ -39,92 +38,53 @@
   </main>
 
   <script>
-    // Wait until scripts are loaded
     document.addEventListener("DOMContentLoaded", () => {
-      try {
-        const user = Pathlift.requireUser();
-        document.getElementById("username").textContent = user.name;
+      const user = Pathlift.requireUser();
+      document.getElementById("username").textContent = user.name;
 
-        const tracksContainer = document.getElementById("tracks");
+      const container = document.getElementById("tracks");
+      const progress = Pathlift.getProgress();
 
-        if (typeof PATHLIFT_TRACKS === "undefined") {
-          tracksContainer.innerHTML = `
-            <div class="card">
-              <h3>Curriculum not loaded</h3>
-              <p class="muted">Make sure <code>assets/lessons.js</code> exists and is linked correctly.</p>
-            </div>
-          `;
-          return;
-        }
+      PATHLIFT_TRACKS.forEach(track => {
+        const card = document.createElement("div");
+        card.className = "card";
 
-        const progress = Pathlift.getProgress();
+        const h3 = document.createElement("h3");
+        h3.textContent = track.name;
+        card.appendChild(h3);
 
-        PATHLIFT_TRACKS.forEach(track => {
-          const totalLessons = track.lessons.length;
-          const completed = track.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
-          const percent = Math.round((completed / totalLessons) * 100);
+        const p = document.createElement("p");
+        p.className = "muted";
+        p.textContent = track.description;
+        card.appendChild(p);
 
-          const card = document.createElement("div");
-          card.className = "card";
+        const ul = document.createElement("ul");
+        ul.className = "checklist space-md";
 
-          const h3 = document.createElement("h3");
-          h3.textContent = track.name;
-          card.appendChild(h3);
+        track.lessons.forEach(lesson => {
+          const li = document.createElement("li");
+          const icon = document.createElement("span");
+          icon.className = "icon";
+          icon.textContent = Pathlift.isLessonComplete(lesson.id) ? "✓" : "•";
 
-          const p = document.createElement("p");
-          p.className = "muted";
-          p.textContent = track.description;
-          card.appendChild(p);
+          const span = document.createElement("span");
+          span.textContent = lesson.title;
 
-          const barOuter = document.createElement("div");
-          barOuter.className = "progress-bar";
+          li.appendChild(icon);
+          li.appendChild(span);
 
-          const barInner = document.createElement("div");
-          barInner.className = "progress-fill";
-          barInner.style.width = percent + "%";
-          barOuter.appendChild(barInner);
-          card.appendChild(barOuter);
-
-          const small = document.createElement("small");
-          small.className = "muted";
-          small.textContent = `${completed} of ${totalLessons} lessons completed`;
-          card.appendChild(small);
-
-          const list = document.createElement("ul");
-          list.className = "checklist space-md";
-
-          track.lessons.forEach(lesson => {
-            const li = document.createElement("li");
-            const icon = document.createElement("span");
-            icon.className = "icon";
-            icon.textContent = Pathlift.isLessonComplete(lesson.id) ? "✓" : "•";
-            const span = document.createElement("span");
-            span.textContent = lesson.title;
-            li.appendChild(icon);
-            li.appendChild(span);
-
-            li.style.cursor = "pointer";
-            li.addEventListener("click", () => {
-              Pathlift.setCurrentLesson(lesson.id);
-              window.location.href = "lesson.html";
-            });
-
-            list.appendChild(li);
+          li.style.cursor = "pointer";
+          li.addEventListener("click", () => {
+            Pathlift.setCurrentLesson(lesson.id);
+            window.location.href = "lesson.html";
           });
 
-          card.appendChild(list);
-          tracksContainer.appendChild(card);
+          ul.appendChild(li);
         });
-      } catch (err) {
-        console.error(err);
-        const tracksContainer = document.getElementById("tracks");
-        tracksContainer.innerHTML = `
-          <div class="card">
-            <h3>Something went wrong</h3>
-            <p class="muted">Check the browser console for details.</p>
-          </div>
-        `;
-      }
+
+        card.appendChild(ul);
+        container.appendChild(card);
+      });
     });
   </script>
 </body>
