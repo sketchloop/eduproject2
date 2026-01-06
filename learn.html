@@ -4,19 +4,28 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Learning Dashboard | PathLift</title>
+
+  <!-- STYLES -->
   <link rel="stylesheet" href="assets/styles.css" />
+
+  <!-- LOAD CURRICULUM FIRST -->
   <script defer src="assets/lessons.js"></script>
+
+  <!-- LOAD PLATFORM LOGIC -->
   <script defer src="assets/main.js"></script>
 </head>
+
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
 
+  <!-- HEADER -->
   <header class="header">
     <div class="container nav">
       <a class="brand" href="index.html">
         <span class="brand-logo"></span>
         <span class="brand-name">PathLift</span>
       </a>
+
       <nav>
         <div class="nav-links">
           <a href="learn.html" aria-current="page">Dashboard</a>
@@ -26,21 +35,47 @@
     </div>
   </header>
 
+  <!-- MAIN -->
   <main id="main" class="section">
     <div class="container">
+
+      <!-- USER CARD -->
       <div class="card">
         <h1>Welcome, <span id="username"></span></h1>
-        <p class="muted">Choose a track and start where you are. Your progress is saved on this device.</p>
+        <p class="muted">Choose a track and start learning. Your progress is saved on this device.</p>
       </div>
 
+      <!-- TRACKS WILL BE INSERTED HERE -->
       <div id="tracks" class="grid grid-2 space-md"></div>
+
     </div>
   </main>
 
+  <!-- SCRIPT TO RENDER TRACKS -->
   <script>
+    /****************************************************
+     * 1. ENSURE USER EXISTS
+     ****************************************************/
     const user = Pathlift.requireUser();
     document.getElementById("username").textContent = user.name;
 
+    /****************************************************
+     * 2. ENSURE TRACK DATA EXISTS
+     ****************************************************/
+    if (typeof PATHLIFT_TRACKS === "undefined") {
+      const container = document.getElementById("tracks");
+      container.innerHTML = `
+        <div class="card">
+          <h3>Error: Curriculum not loaded</h3>
+          <p class="muted">Make sure <code>assets/lessons.js</code> exists and is linked correctly.</p>
+        </div>
+      `;
+      throw new Error("PATHLIFT_TRACKS missing — lessons.js did not load.");
+    }
+
+    /****************************************************
+     * 3. RENDER TRACKS + LESSONS
+     ****************************************************/
     const tracksContainer = document.getElementById("tracks");
     const progress = Pathlift.getProgress();
 
@@ -49,51 +84,56 @@
       const completed = track.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
       const percent = Math.round((completed / totalLessons) * 100);
 
+      // TRACK CARD
       const card = document.createElement("div");
       card.className = "card";
 
+      // TITLE
       const h3 = document.createElement("h3");
       h3.textContent = track.name;
       card.appendChild(h3);
 
+      // DESCRIPTION
       const p = document.createElement("p");
       p.className = "muted";
       p.textContent = track.description;
       card.appendChild(p);
 
+      // PROGRESS BAR
       const barOuter = document.createElement("div");
-      barOuter.style.background = "#111827";
-      barOuter.style.borderRadius = "999px";
-      barOuter.style.overflow = "hidden";
-      barOuter.style.margin = "0.5rem 0";
-      barOuter.style.height = "8px";
+      barOuter.className = "progress-bar";
 
       const barInner = document.createElement("div");
-      barInner.style.height = "100%";
+      barInner.className = "progress-fill";
       barInner.style.width = percent + "%";
-      barInner.style.background = "#22c55e";
-      barOuter.appendChild(barInner);
 
+      barOuter.appendChild(barInner);
       card.appendChild(barOuter);
 
+      // PROGRESS TEXT
       const small = document.createElement("small");
       small.className = "muted";
       small.textContent = `${completed} of ${totalLessons} lessons completed`;
       card.appendChild(small);
 
+      // LESSON LIST
       const list = document.createElement("ul");
       list.className = "checklist space-md";
 
       track.lessons.forEach(lesson => {
         const li = document.createElement("li");
+
         const icon = document.createElement("span");
         icon.className = "icon";
         icon.textContent = Pathlift.isLessonComplete(lesson.id) ? "✓" : "•";
+
         const span = document.createElement("span");
         span.textContent = lesson.title;
+
         li.appendChild(icon);
         li.appendChild(span);
 
+        // CLICK HANDLER
         li.style.cursor = "pointer";
         li.addEventListener("click", () => {
           Pathlift.setCurrentLesson(lesson.id);
@@ -107,5 +147,6 @@
       tracksContainer.appendChild(card);
     });
   </script>
+
 </body>
 </html>
