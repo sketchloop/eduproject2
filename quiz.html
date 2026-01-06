@@ -32,78 +32,83 @@
       <form id="quizForm" class="space-md"></form>
       <div class="space-md">
         <button class="btn" type="submit" form="quizForm">Submit quiz</button>
-        <button class="btn secondary" onclick="window.location.href='learn.html'">Back to dashboard</button>
+        <button class="btn secondary" type="button" onclick="window.location.href='learn.html'">Back to dashboard</button>
       </div>
       <p id="quizResult" class="space-md muted"></p>
     </div>
   </main>
 
   <script>
-    Pathlift.requireUser();
+    document.addEventListener("DOMContentLoaded", () => {
+      Pathlift.requireUser();
 
-    const quizId = Pathlift.getCurrentQuizId();
-    if (!quizId) window.location.href = "learn.html";
+      const quizId = Pathlift.getCurrentQuizId();
+      if (!quizId) {
+        window.location.href = "learn.html";
+        return;
+      }
 
-    const QUIZZES = {
-      "life-1": [
-        {
-          q: "What’s the main goal of building a routine?",
-          options: [
-            "To control every minute of your life",
-            "To create a stable base you can build on",
-            "To impress other people",
-            "To avoid doing hard things"
-          ],
-          correct: 1
-        }
-      ],
-      "digital-1": [
-        {
-          q: "Which email looks most professional?",
-          options: [
-            "xX420gOdXx@gmail.com",
-            "cutie_baby_99@yahoo.com",
-            "jordan.smith@gmail.com",
-            "bigbosskiller@random.com"
-          ],
-          correct: 2
-        }
-      ],
-      "workplace-1": [
-        {
-          q: "What’s a good response if you don’t understand instructions?",
-          options: [
-            "Pretend you get it and hope it works out",
-            "Say nothing and Google it later",
-            "Ask: “Can I repeat this back to you to make sure I got it?”",
-            "Blame someone else"
-          ],
-          correct: 2
-        }
-      ],
-      "career-3": [
-        {
-          q: "What’s a realistic first step toward working at a company like Apple?",
-          options: [
-            "Demand a senior engineer job immediately",
-            "Build skills in customer service, tech comfort, and reliability",
-            "Wait until you feel 100% ready",
-            "Give up because it’s too hard"
-          ],
-          correct: 1
-        }
-      ]
-      // You can add more quizzes keyed by lesson id
-    };
+      const QUIZZES = {
+        "life-1": [
+          {
+            q: "What’s the main goal of building a routine?",
+            options: [
+              "To control every minute of your life",
+              "To create a stable base you can build on",
+              "To impress other people",
+              "To avoid doing hard things"
+            ],
+            correct: 1
+          }
+        ],
+        "digital-1": [
+          {
+            q: "Which email looks most professional?",
+            options: [
+              "xX420gOdXx@gmail.com",
+              "cutie_baby_99@yahoo.com",
+              "jordan.smith@gmail.com",
+              "bigbosskiller@random.com"
+            ],
+            correct: 2
+          }
+        ],
+        "workplace-1": [
+          {
+            q: "What’s a good response if you don’t understand instructions?",
+            options: [
+              "Pretend you get it and hope it works out",
+              "Say nothing and Google it later",
+              "Ask: “Can I repeat this back to you to make sure I got it?”",
+              "Blame someone else"
+            ],
+            correct: 2
+          }
+        ],
+        "career-3": [
+          {
+            q: "What’s a realistic first step toward working at a company like Apple?",
+            options: [
+              "Demand a senior engineer job immediately",
+              "Build skills in customer service, tech comfort, and reliability",
+              "Wait until you feel 100% ready",
+              "Give up because it’s too hard"
+            ],
+            correct: 1
+          }
+        ]
+      };
 
-    const quiz = QUIZZES[quizId] || [];
-    const form = document.getElementById("quizForm");
-    const title = document.getElementById("quizTitle");
-    title.textContent = "Quiz for " + quizId;
+      const quiz = QUIZZES[quizId] || [];
+      const form = document.getElementById("quizForm");
+      const title = document.getElementById("quizTitle");
+      title.textContent = "Quiz for " + quizId;
 
-    if (!quiz.length) {
-      form.innerHTML = "<p>No quiz available for this lesson yet.</p>";
-    } else {
+      if (!quiz.length) {
+        form.innerHTML = "<p>No quiz available for this lesson yet.</p>";
+        return;
+      }
+
       quiz.forEach((item, index) => {
         const wrapper = document.createElement("div");
         wrapper.className = "space-md";
@@ -126,27 +131,26 @@
 
         form.appendChild(wrapper);
       });
-    }
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      if (!quiz.length) return;
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-      let correctCount = 0;
-      quiz.forEach((item, index) => {
-        const selected = form.querySelector(`input[name="q${index}"]:checked`);
-        if (selected && Number(selected.value) === item.correct) {
-          correctCount++;
-        }
+        let correctCount = 0;
+        quiz.forEach((item, index) => {
+          const selected = form.querySelector(`input[name="q${index}"]:checked`);
+          if (selected && Number(selected.value) === item.correct) {
+            correctCount++;
+          }
+        });
+
+        const score = Math.round((correctCount / quiz.length) * 100);
+        document.getElementById("quizResult").textContent =
+          `You scored ${score}%. ${score >= 70 ? "Nice work — that’s a solid understanding." : "Keep going — review the lesson and try again."}`;
+
+        const progress = Pathlift.getProgress();
+        progress.quizScores[quizId] = score;
+        Pathlift.saveProgress(progress);
       });
-
-      const score = Math.round((correctCount / quiz.length) * 100);
-      document.getElementById("quizResult").textContent =
-        `You scored ${score}%. ${score >= 70 ? "Nice work — that’s a solid understanding." : "Keep going — review the lesson and try again."}`;
-
-      const progress = Pathlift.getProgress();
-      progress.quizScores[quizId] = score;
-      Pathlift.saveProgress(progress);
     });
   </script>
 </body>
