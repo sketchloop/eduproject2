@@ -9,11 +9,12 @@
 
 <body>
   <div class="container">
+    <button onclick="goBack()" class="back-btn">← Back</button>
+
     <h1 id="quiz-title">Quiz</h1>
 
     <div id="quiz-box">
       <p id="question-text"></p>
-
       <div id="options"></div>
 
       <button id="next-btn" style="display:none;">Next Question</button>
@@ -25,20 +26,73 @@
       <p id="score-text"></p>
       <button onclick="goBack()">Back to Lesson</button>
     </div>
+
+    <div id="error-box" style="display:none; margin-top:20px;">
+      <h2>Error</h2>
+      <p id="error-text"></p>
+    </div>
   </div>
 
+  <!-- LOAD QUIZ DATA -->
   <script src="assets/quiz-data.js"></script>
 
   <script>
     // -----------------------------
-    // QUIZ ENGINE
+    // SAFETY CHECKS
+    // -----------------------------
+    function showError(msg) {
+      document.getElementById("quiz-box").style.display = "none";
+      document.getElementById("result-box").style.display = "none";
+
+      const box = document.getElementById("error-box");
+      document.getElementById("error-text").innerText = msg;
+      box.style.display = "block";
+    }
+
+    // -----------------------------
+    // GET LESSON ID FROM URL
     // -----------------------------
     const params = new URLSearchParams(window.location.search);
     const lessonId = params.get("lesson");
 
-    const track = lessonId.split("-")[0]; // e.g. "foundations"
+    if (!lessonId) {
+      showError("No lesson was provided. The quiz cannot load.");
+      throw new Error("Missing lesson ID");
+    }
+
+    // -----------------------------
+    // DETERMINE TRACK NAME
+    // -----------------------------
+    const track = lessonId.split("-")[0];
+
+    if (!track) {
+      showError("Invalid lesson format. Expected something like 'foundations-1'.");
+      throw new Error("Invalid lesson ID format");
+    }
+
+    // -----------------------------
+    // LOAD QUIZ DATA FOR TRACK
+    // -----------------------------
+    if (typeof QUIZZES === "undefined") {
+      showError("Quiz data file (quiz-data.js) did not load.");
+      throw new Error("QUIZZES is undefined");
+    }
+
     const quiz = QUIZZES[track];
 
+    if (!quiz) {
+      showError(`No quiz found for track: "${track}". Check quiz-data.js.`);
+      throw new Error("Quiz not found for track");
+    }
+
+    if (!Array.isArray(quiz) || quiz.length === 0) {
+      showError(`Quiz for track "${track}" is empty.`);
+      throw new Error("Quiz array empty");
+    }
+
+    // -----------------------------
+    // QUIZ ENGINE
+    // -----------------------------
     let current = 0;
     let score = 0;
 
@@ -47,6 +101,12 @@
 
     function loadQuestion() {
       const q = quiz[current];
+
+      if (!q || !q.q) {
+        showError("A quiz question is missing or incorrectly formatted.");
+        return;
+      }
+
       document.getElementById("question-text").innerText = q.q;
 
       const optionsBox = document.getElementById("options");
@@ -99,6 +159,7 @@
       window.history.back();
     }
 
+    // Start quiz
     loadQuestion();
   </script>
 </body>
