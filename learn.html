@@ -1,90 +1,54 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Learning Dashboard | PathLift</title>
-
-  <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/lessons.js"></script>
-  <script defer src="assets/main.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learning Tracks</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <header class="header">
-    <div class="container nav">
-      <a class="brand" href="index.html">
-        <span class="brand-logo"></span>
-        <span class="brand-name">PathLift</span>
-      </a>
-      <nav>
-        <div class="nav-links">
-          <a href="learn.html" aria-current="page">Dashboard</a>
-          <a href="profile.html">Profile</a>
-        </div>
-      </nav>
-    </div>
-  </header>
+  <div class="container">
+    <h1>Learning Tracks</h1>
+    <p>Select a track to explore its lessons.</p>
 
-  <main class="section">
-    <div class="container">
-      <div class="card">
-        <h1>Welcome, <span id="username"></span></h1>
-        <p class="muted">Choose a track and start learning.</p>
-      </div>
+    <div id="tracks"></div>
+  </div>
 
-      <div id="tracks" class="grid grid-2 space-md"></div>
-    </div>
-  </main>
+  <script src="assets/lessons.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const user = Pathlift.requireUser();
-      document.getElementById("username").textContent = user.name;
+    // Render all tracks and their lessons
+    const tracksBox = document.getElementById("tracks");
 
-      const container = document.getElementById("tracks");
-      const progress = Pathlift.getProgress();
+    PATHLIFT_TRACKS.forEach(track => {
+      const trackDiv = document.createElement("div");
+      trackDiv.className = "track-card";
 
-      PATHLIFT_TRACKS.forEach(track => {
-        const card = document.createElement("div");
-        card.className = "card";
+      const title = document.createElement("h2");
+      title.innerText = track.name;
 
-        const h3 = document.createElement("h3");
-        h3.textContent = track.name;
-        card.appendChild(h3);
+      const desc = document.createElement("p");
+      desc.innerText = track.description;
 
-        const p = document.createElement("p");
-        p.className = "muted";
-        p.textContent = track.description;
-        card.appendChild(p);
+      const lessonsList = document.createElement("div");
+      lessonsList.className = "lessons-list";
 
-        const ul = document.createElement("ul");
-        ul.className = "checklist space-md";
-
-        track.lessons.forEach(lesson => {
-          const li = document.createElement("li");
-          const icon = document.createElement("span");
-          icon.className = "icon";
-          icon.textContent = Pathlift.isLessonComplete(lesson.id) ? "✓" : "•";
-
-          const span = document.createElement("span");
-          span.textContent = lesson.title;
-
-          li.appendChild(icon);
-          li.appendChild(span);
-
-          li.style.cursor = "pointer";
-          li.addEventListener("click", () => {
-            Pathlift.setCurrentLesson(lesson.id);
-            window.location.href = "lesson.html";
-          });
-
-          ul.appendChild(li);
-        });
-
-        card.appendChild(ul);
-        container.appendChild(card);
+      track.lessons.forEach(lesson => {
+        const lessonBtn = document.createElement("button");
+        lessonBtn.className = "lesson-btn";
+        lessonBtn.innerText = lesson.title;
+        lessonBtn.onclick = () => {
+          window.location.href = `lesson.html?lesson=${lesson.id}`;
+        };
+        lessonsList.appendChild(lessonBtn);
       });
+
+      trackDiv.appendChild(title);
+      trackDiv.appendChild(desc);
+      trackDiv.appendChild(lessonsList);
+
+      tracksBox.appendChild(trackDiv);
     });
   </script>
 </body>
