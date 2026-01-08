@@ -1,93 +1,103 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Profile | PathLift</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/lessons.js"></script>
-  <script defer src="assets/main.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Progress</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="container">
+    <button onclick="goBack()" class="back-btn">← Back</button>
 
-  <header class="header">
-    <div class="container nav">
-      <a class="brand" href="index.html">
-        <span class="brand-logo"></span>
-        <span class="brand-name">PathLift</span>
-      </a>
-      <nav>
-        <div class="nav-links">
-          <a href="learn.html">Dashboard</a>
-          <a href="profile.html" aria-current="page">Profile</a>
-        </div>
-      </nav>
-    </div>
-  </header>
+    <h1>Your Learning Progress</h1>
 
-  <main id="main" class="section">
-    <div class="container grid grid-2">
-      <div class="card">
-        <h1>Your Profile</h1>
-        <p><strong>Name:</strong> <span id="name"></span></p>
-        <p><strong>Email:</strong> <span id="email"></span></p>
-        <button class="btn secondary" id="resetBtn">Reset progress on this device</button>
-      </div>
+    <div id="overall-progress" class="progress-box"></div>
 
-      <div class="card">
-        <h2>Progress</h2>
-        <ul id="progressList" class="checklist"></ul>
-      </div>
-    </div>
-  </main>
+    <h2>Track Progress</h2>
+    <div id="track-progress"></div>
+
+    <h2>Quiz Scores</h2>
+    <div id="quiz-scores"></div>
+  </div>
+
+  <script src="assets/lessons.js"></script>
+  <script src="assets/main.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const user = Pathlift.requireUser();
-      document.getElementById("name").textContent = user.name;
-      document.getElementById("email").textContent = user.email;
+    function goBack() {
+      window.location.href = "index.html";
+    }
 
-      const progress = Pathlift.getProgress();
-      const list = document.getElementById("progressList");
+    // -----------------------------
+    // OVERALL PROGRESS
+    // -----------------------------
+    function renderOverallProgress() {
+      const totalLessons = getTotalLessons();
+      const completed = countAllCompletedLessons();
 
-      if (typeof PATHLIFT_TRACKS === "undefined") {
-        const li = document.createElement("li");
-        const icon = document.createElement("span");
-        icon.className = "icon";
-        icon.textContent = "•";
-        const span = document.createElement("span");
-        span.textContent = "Curriculum not loaded. Check assets/lessons.js.";
-        li.appendChild(icon);
-        li.appendChild(span);
-        list.appendChild(li);
-      } else {
-        PATHLIFT_TRACKS.forEach(track => {
-          const completed = track.lessons.filter(l => progress.completedLessons.includes(l.id)).length;
-          const total = track.lessons.length;
+      const box = document.getElementById("overall-progress");
+      box.innerHTML = `
+        <p><strong>Total Lessons Completed:</strong> ${completed} / ${totalLessons}</p>
+      `;
+    }
 
-          const li = document.createElement("li");
-          const icon = document.createElement("span");
-          icon.className = "icon";
-          icon.textContent = completed === total ? "✓" : "•";
-          const span = document.createElement("span");
-          span.textContent = `${track.name}: ${completed} of ${total} lessons completed`;
-          li.appendChild(icon);
-          li.appendChild(span);
-          list.appendChild(li);
-        });
-      }
+    // -----------------------------
+    // TRACK PROGRESS
+    // -----------------------------
+    function renderTrackProgress() {
+      const container = document.getElementById("track-progress");
+      container.innerHTML = "";
 
-      document.getElementById("resetBtn").addEventListener("click", () => {
-        if (confirm("Reset all progress on this device? This cannot be undone.")) {
-          localStorage.removeItem("pathliftProgress");
-          localStorage.removeItem("pathliftCurrentLesson");
-          localStorage.removeItem("pathliftCurrentQuiz");
-          alert("Progress reset. Reloading.");
-          window.location.reload();
-        }
+      PATHLIFT_TRACKS.forEach(track => {
+        const completed = countCompletedLessons(track);
+        const total = track.lessons.length;
+
+        const div = document.createElement("div");
+        div.className = "track-progress-box";
+
+        div.innerHTML = `
+          <h3>${track.name}</h3>
+          <p>${completed} / ${total} lessons completed</p>
+        `;
+
+        container.appendChild(div);
       });
-    });
+    }
+
+    // -----------------------------
+    // QUIZ SCORES
+    // -----------------------------
+    function renderQuizScores() {
+      const container = document.getElementById("quiz-scores");
+      container.innerHTML = "";
+
+      PATHLIFT_TRACKS.forEach(track => {
+        track.lessons.forEach(lesson => {
+          const scoreData = getQuizScore(lesson.id);
+          if (scoreData) {
+            const div = document.createElement("div");
+            div.className = "quiz-score-box";
+
+            div.innerHTML = `
+              <p><strong>${lesson.title}</strong> — Score: ${scoreData.score} / ${scoreData.total}</p>
+            `;
+
+            container.appendChild(div);
+          }
+        });
+      });
+
+      if (container.innerHTML.trim() === "") {
+        container.innerHTML = "<p>No quizzes completed yet.</p>";
+      }
+    }
+
+    // Render everything
+    renderOverallProgress();
+    renderTrackProgress();
+    renderQuizScores();
   </script>
 </body>
 </html>
