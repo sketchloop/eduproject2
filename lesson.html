@@ -1,93 +1,134 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lesson | PathLift</title>
-
-  <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/lessons.js"></script>
-  <script defer src="assets/main.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-  <header class="header">
-    <div class="container nav">
-      <a class="brand" href="index.html">
-        <span class="brand-logo"></span>
-        <span class="brand-name">PathLift</span>
-      </a>
-      <nav>
-        <div class="nav-links">
-          <a href="learn.html">Dashboard</a>
-          <a href="profile.html">Profile</a>
-        </div>
-      </nav>
+  <div class="container">
+    <button onclick="goBack()" class="back-btn">← Back to Tracks</button>
+
+    <h1 id="lesson-title">Lesson</h1>
+    <p id="lesson-track"></p>
+
+    <div id="lesson-steps"></div>
+
+    <div class="reflection-section">
+      <h2>Your Reflection</h2>
+      <p id="reflection-prompt"></p>
+      <textarea id="reflection-input" rows="5" placeholder="Write your thoughts here..."></textarea>
+      <button id="save-reflection-btn">Save Reflection</button>
+      <p id="reflection-status" class="status-text"></p>
     </div>
-  </header>
 
-  <main class="section">
-    <div class="container card">
-      <h1 id="lessonTitle"></h1>
-
-      <ol id="steps" class="space-md"></ol>
-
-      <div class="space-md">
-        <label><strong>Reflection</strong></label>
-        <textarea id="reflection" rows="4"></textarea>
-      </div>
-
-      <div class="space-md">
-        <button class="btn" id="completeBtn">Mark complete</button>
-        <button class="btn secondary" id="quizBtn">Take quiz</button>
-      </div>
+    <div class="lesson-actions">
+      <button id="start-quiz-btn">Start Quiz</button>
     </div>
-  </main>
+  </div>
+
+  <script src="assets/lessons.js"></script>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const lessonId = Pathlift.getCurrentLessonId();
-      if (!lessonId) return window.location.href = "learn.html";
+    const params = new URLSearchParams(window.location.search);
+    const lessonId = params.get("lesson"); // e.g. "foundations-1"
 
-      let lesson = null;
+    const trackKey = lessonId ? lessonId.split("-")[0] : null;
 
-      // Find lesson by simple ID
+    let currentTrack = null;
+    let currentLesson = null;
+
+    function findLesson() {
+      if (!lessonId) return;
+
       for (const track of PATHLIFT_TRACKS) {
-        const found = track.lessons.find(l => l.id === lessonId);
-        if (found) lesson = found;
+        const lesson = track.lessons.find(l => l.id === lessonId);
+        if (lesson) {
+          currentTrack = track;
+          currentLesson = lesson;
+          return;
+        }
+      }
+    }
+
+    function renderLesson() {
+      if (!currentLesson || !currentTrack) {
+        document.getElementById("lesson-title").innerText = "Lesson not found";
+        document.getElementById("lesson-steps").innerHTML =
+          "<p>We couldn't find this lesson. Please go back and choose another.</p>";
+        document.querySelector(".reflection-section").style.display = "none";
+        document.querySelector(".lesson-actions").style.display = "none";
+        return;
       }
 
-      if (!lesson) {
-        alert("Lesson not found.");
-        return window.location.href = "learn.html";
+      document.getElementById("lesson-title").innerText = currentLesson.title;
+      document.getElementById("lesson-track").innerText =
+        currentTrack.name || "";
+
+      const stepsBox = document.getElementById("lesson-steps");
+      stepsBox.innerHTML = "";
+
+      if (Array.isArray(currentLesson.steps)) {
+        currentLesson.steps.forEach((step, index) => {
+          const stepDiv = document.createElement("div");
+          stepDiv.className = "lesson-step";
+
+          const stepTitle = document.createElement("h3");
+          stepTitle.innerText = `Step ${index + 1}`;
+
+          const stepText = document.createElement("p");
+          stepText.innerText = step;
+
+          stepDiv.appendChild(stepTitle);
+          stepDiv.appendChild(stepText);
+          stepsBox.appendChild(stepDiv);
+        });
       }
 
-      document.getElementById("lessonTitle").textContent = lesson.title;
+      document.getElementById("reflection-prompt").innerText =
+        currentLesson.reflection || "What stood out to you in this lesson?";
 
-      const stepsList = document.getElementById("steps");
-      lesson.steps.forEach(step => {
-        const li = document.createElement("li");
-        li.textContent = step;
-        stepsList.appendChild(li);
+      loadReflection();
+    }
+
+    function getReflectionKey() {
+      return `reflection_${lessonId}`;
+    }
+
+    function loadReflection() {
+      const saved = localStorage.getItem(getReflectionKey());
+      if (saved) {
+        document.getElementById("reflection-input").value = saved;
+        document.getElementById("reflection-status").innerText =
+          "Reflection loaded.";
+      }
+    }
+
+    function saveReflection() {
+      const text = document.getElementById("reflection-input").value.trim();
+      localStorage.setItem(getReflectionKey(), text);
+      document.getElementById("reflection-status").innerText =
+        "Reflection saved.";
+    }
+
+    function goBack() {
+      window.location.href = "learn.html";
+    }
+
+    document
+      .getElementById("save-reflection-btn")
+      .addEventListener("click", saveReflection);
+
+    document
+      .getElementById("start-quiz-btn")
+      .addEventListener("click", () => {
+        window.location.href = `quiz.html?lesson=${lessonId}`;
       });
 
-      const reflectionBox = document.getElementById("reflection");
-      const key = "reflection_" + lessonId;
-      reflectionBox.value = localStorage.getItem(key) || "";
-      reflectionBox.addEventListener("input", () => {
-        localStorage.setItem(key, reflectionBox.value);
-      });
-
-      document.getElementById("completeBtn").addEventListener("click", () => {
-        Pathlift.markLessonComplete(lessonId);
-        alert("Lesson marked complete!");
-      });
-
-      document.getElementById("quizBtn").addEventListener("click", () => {
-        Pathlift.setCurrentQuiz(lessonId);
-        window.location.href = "quiz.html";
-      });
-    });
+    findLesson();
+    renderLesson();
   </script>
 </body>
 </html>
