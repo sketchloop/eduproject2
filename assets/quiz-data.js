@@ -320,3 +320,215 @@ const QUIZZES = {
   ]
 
 }; // END QUIZZES PART 1
+
+  // --------------------------------------------------
+  // TRACK 4 — CAREER DEVELOPMENT (10 lessons)
+  // --------------------------------------------------
+  career: [
+    {
+      q: "What is the purpose of a resume?",
+      options: [
+        "To list every job you've ever had",
+        "To highlight your most relevant skills and experience",
+        "To tell your life story",
+        "To replace a job interview"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is a good way to prepare for an interview?",
+      options: [
+        "Show up without researching the company",
+        "Memorize a script",
+        "Review common questions and practice your answers",
+        "Avoid asking questions"
+      ],
+      correct: 2
+    },
+    {
+      q: "What is a professional reference?",
+      options: [
+        "A friend who likes you",
+        "Someone who can speak about your work ethic",
+        "A celebrity",
+        "A random coworker"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is the purpose of a cover letter?",
+      options: [
+        "To repeat your resume word for word",
+        "To explain why you're a strong fit for the role",
+        "To list your hobbies",
+        "To complain about past jobs"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is networking?",
+      options: [
+        "Asking strangers for jobs",
+        "Building relationships that can support your career",
+        "Collecting business cards",
+        "Only talking to managers"
+      ],
+      correct: 1
+    },
+    {
+      q: "What should you do after an interview?",
+      options: [
+        "Forget about it",
+        "Send a thank‑you message",
+        "Call every hour for updates",
+        "Post about it on social media"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is a transferable skill?",
+      options: [
+        "A skill that only works in one job",
+        "A skill you can use in many roles",
+        "A skill you forget quickly",
+        "A skill that requires a degree"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is the best way to describe your experience on a resume?",
+      options: [
+        "Use clear bullet points with action verbs",
+        "Write long paragraphs",
+        "Use slang",
+        "Include emojis"
+      ],
+      correct: 0
+    },
+    {
+      q: "What is a career goal?",
+      options: [
+        "A dream with no plan",
+        "A clear direction you want to grow toward",
+        "Something you keep secret",
+        "Something you change every day"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is the purpose of job searching consistently?",
+      options: [
+        "To get overwhelmed",
+        "To increase your chances of finding opportunities",
+        "To impress recruiters",
+        "To avoid improving your skills"
+      ],
+      correct: 1
+    }
+  ],
+
+  // --------------------------------------------------
+  // TRACK 5 — TECH & IT SUPPORT (10 lessons)
+  // --------------------------------------------------
+  tech: [
+    {
+      q: "What is the first step in basic troubleshooting?",
+      options: [
+        "Restart the device",
+        "Replace the hardware",
+        "Delete system files",
+        "Ignore the issue"
+      ],
+      correct: 0
+    },
+    {
+      q: "What does 'Wi‑Fi' allow a device to do?",
+      options: [
+        "Connect to the internet wirelessly",
+        "Charge faster",
+        "Store more files",
+        "Run without electricity"
+      ],
+      correct: 0
+    },
+    {
+      q: "What is RAM used for?",
+      options: [
+        "Long‑term storage",
+        "Temporary memory for running programs",
+        "Internet speed",
+        "Graphics processing"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is the purpose of antivirus software?",
+      options: [
+        "To decorate your desktop",
+        "To protect your device from malware",
+        "To make your computer faster automatically",
+        "To block all websites"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is a common fix for slow computers?",
+      options: [
+        "Open more programs",
+        "Restart the device",
+        "Delete random files",
+        "Disable all updates"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is a 'ticket' in IT support?",
+      options: [
+        "A fine for breaking rules",
+        "A record of a technical issue that needs solving",
+        "A receipt for a purchase",
+        "A password reset"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is the purpose of system updates?",
+      options: [
+        "To break your device",
+        "To add security and improve performance",
+        "To delete your files",
+        "To slow down your computer"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is a common cause of internet issues?",
+      options: [
+        "Router problems",
+        "The weather",
+        "Your keyboard",
+        "Your wallpaper"
+      ],
+      correct: 0
+    },
+    {
+      q: "What should you do before replacing hardware?",
+      options: [
+        "Try software troubleshooting first",
+        "Break the device",
+        "Guess the problem",
+        "Ignore the issue"
+      ],
+      correct: 0
+    },
+    {
+      q: "What is the purpose of a help desk?",
+      options: [
+        "To confuse users",
+        "To provide technical support",
+        "To sell products",
+        "To store old equipment"
+      ],
+      correct: 1
+    }
+  ],
