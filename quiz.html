@@ -1,214 +1,309 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Quiz | PathLift</title>
-  <link rel="stylesheet" href="assets/styles.css" />
-  <script defer src="assets/lessons.js"></script>
-  <script defer src="assets/main.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="container">
+    <h1 id="quiz-title">Quiz</h1>
 
-  <header class="header">
-    <div class="container nav">
-      <a class="brand" href="index.html">
-        <span class="brand-logo"></span>
-        <span class="brand-name">PathLift</span>
-      </a>
-      <nav>
-        <div class="nav-links">
-          <a href="learn.html">Dashboard</a>
-          <a href="profile.html">Profile</a>
-        </div>
-      </nav>
+    <div id="quiz-box">
+      <p id="question-text"></p>
+
+      <div id="options"></div>
+
+      <button id="next-btn" style="display:none;">Next Question</button>
+      <button id="finish-btn" style="display:none;">Finish Quiz</button>
     </div>
-  </header>
 
-  <main id="main" class="section">
-    <div class="container card">
-      <h1 id="quizTitle">Quiz</h1>
-      <form id="quizForm" class="space-md"></form>
-
-      <div class="space-md">
-        <button class="btn" type="submit" form="quizForm">Submit quiz</button>
-        <button class="btn secondary" type="button" onclick="window.location.href='learn.html'">
-          Back to dashboard
-        </button>
-      </div>
-
-      <p id="quizResult" class="space-md muted"></p>
+    <div id="result-box" style="display:none;">
+      <h2>Your Score</h2>
+      <p id="score-text"></p>
+      <button onclick="goBack()">Back to Lesson</button>
     </div>
-  </main>
+  </div>
 
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      Pathlift.requireUser();
+    // -----------------------------
+    // QUIZ DATA (Replace with your full 10-question sets)
+    // -----------------------------
+    const QUIZZES = {
+      foundations: [
+        {
+          q: "What is the main purpose of building a daily routine?",
+          options: [
+            "To control every second of your life",
+            "To create a stable base you can build on",
+            "To impress other people",
+            "To avoid responsibilities"
+          ],
+          correct: 1
+        },
+        {
+          q: "Which of the following is an example of a realistic goal?",
+          options: [
+            "Become a millionaire by next week",
+            "Learn everything in one day",
+            "Study 20 minutes each day",
+            "Never make mistakes again"
+          ],
+          correct: 2
+        },
+        {
+          q: "What is a good way to improve reading comprehension?",
+          options: [
+            "Skim everything quickly",
+            "Summarize what you read in your own words",
+            "Avoid reading difficult material",
+            "Only read headlines"
+          ],
+          correct: 1
+        },
+        {
+          q: "What is the first step in rebuilding confidence?",
+          options: [
+            "Pretending everything is perfect",
+            "Recognizing small wins",
+            "Ignoring your feelings",
+            "Comparing yourself to others"
+          ],
+          correct: 1
+        },
+        {
+          q: "Which habit helps with time management?",
+          options: [
+            "Doing tasks randomly",
+            "Writing a simple daily plan",
+            "Waiting until you feel motivated",
+            "Trying to multitask everything"
+          ],
+          correct: 1
+        },
+        {
+          q: "What is a healthy way to track progress?",
+          options: [
+            "Only noticing failures",
+            "Keeping a small journal",
+            "Expecting perfection",
+            "Never reviewing your goals"
+          ],
+          correct: 1
+        },
+        {
+          q: "What is a sign of a good routine?",
+          options: [
+            "It is impossible to follow",
+            "It includes breaks and flexibility",
+            "It requires waking up at 4 AM",
+            "It changes every hour"
+          ],
+          correct: 1
+        },
+        {
+          q: "Why is writing helpful for personal growth?",
+          options: [
+            "It makes problems disappear instantly",
+            "It helps organize thoughts and emotions",
+            "It replaces talking to people",
+            "It guarantees success"
+          ],
+          correct: 1
+        },
+        {
+          q: "What is a productive way to handle mistakes?",
+          options: [
+            "Give up immediately",
+            "Learn from them and adjust",
+            "Pretend they didn’t happen",
+            "Blame someone else"
+          ],
+          correct: 1
+        },
+        {
+          q: "What is the purpose of setting small goals?",
+          options: [
+            "To avoid big goals forever",
+            "To build momentum and confidence",
+            "To waste time",
+            "To make things harder"
+          ],
+          correct: 1
+        }
+      ],
 
-      const quizId = Pathlift.getCurrentQuizId();
-      if (!quizId) {
-        window.location.href = "learn.html";
-        return;
-      }
+      digital: [
+        {
+          q: "Which email address looks most professional?",
+          options: [
+            "xX420gOdXx@gmail.com",
+            "cutie_baby_99@yahoo.com",
+            "jordan.smith@gmail.com",
+            "bigbosskiller@random.com"
+          ],
+          correct: 2
+        },
+        {
+          q: "What is the purpose of the subject line in an email?",
+          options: [
+            "To write jokes",
+            "To summarize the email’s purpose",
+            "To confuse the reader",
+            "To leave blank"
+          ],
+          correct: 1
+        },
+        {
+          q: "Which file type is best for documents?",
+          options: ["MP3", "PDF", "JPG", "ZIP"],
+          correct: 1
+        },
+        {
+          q: "What is a strong password?",
+          options: [
+            "123456",
+            "password",
+            "Your name",
+            "A mix of letters, numbers, and symbols"
+          ],
+          correct: 3
+        },
+        {
+          q: "What should you do before clicking a link?",
+          options: [
+            "Click immediately",
+            "Check if the sender is trusted",
+            "Ignore the sender",
+            "Forward it to everyone"
+          ],
+          correct: 1
+        },
+        {
+          q: "What is a spreadsheet used for?",
+          options: [
+            "Drawing pictures",
+            "Tracking information and numbers",
+            "Writing essays",
+            "Watching videos"
+          ],
+          correct: 1
+        },
+        {
+          q: "What is phishing?",
+          options: [
+            "A type of music",
+            "A scam to steal information",
+            "A computer update",
+            "A safe email"
+          ],
+          correct: 1
+        },
+        {
+          q: "What is cloud storage?",
+          options: [
+            "A physical hard drive",
+            "A place to store files online",
+            "A type of weather",
+            "A video game"
+          ],
+          correct: 1
+        },
+        {
+          q: "What does CC mean in email?",
+          options: [
+            "Carbon Copy",
+            "Cancel Conversation",
+            "Create Chat",
+            "Copy Code"
+          ],
+          correct: 0
+        },
+        {
+          q: "What is the best way to learn digital tools?",
+          options: [
+            "Avoid using them",
+            "Try things and practice",
+            "Wait for someone else to do it",
+            "Only watch videos"
+          ],
+          correct: 1
+        }
+      ]
+    };
 
-      // Quizzes keyed by the SIMPLE lesson IDs
-      const QUIZZES = {
-        foundations: [
-          {
-            q: "What is the main purpose of building a daily routine?",
-            options: [
-              "To control every second of your life",
-              "To create a stable base you can build on",
-              "To impress other people",
-              "To avoid doing hard things"
-            ],
-            correct: 1
-          }
-        ],
-        digital: [
-          {
-            q: "Which email address looks most professional?",
-            options: [
-              "xX420gOdXx@gmail.com",
-              "cutie_baby_99@yahoo.com",
-              "jordan.smith@gmail.com",
-              "bigbosskiller@random.com"
-            ],
-            correct: 2
-          }
-        ],
-        workplace: [
-          {
-            q: "What’s a good response if you don’t understand instructions?",
-            options: [
-              "Pretend you get it and hope it works out",
-              "Say nothing and Google it later",
-              "Ask: “Can I repeat this back to you to make sure I got it?”",
-              "Blame someone else"
-            ],
-            correct: 2
-          }
-        ],
-        career: [
-          {
-            q: "What’s a realistic first step toward a better job?",
-            options: [
-              "Demand a senior role immediately",
-              "Build skills and update your resume",
-              "Wait until you feel 100% ready",
-              "Give up because it’s too hard"
-            ],
-            correct: 1
-          }
-        ],
-        tech: [
-          {
-            q: "What’s one core part of tech support work?",
-            options: [
-              "Guessing what’s wrong",
-              "Blaming the user",
-              "Systematic troubleshooting and clear communication",
-              "Ignoring documentation"
-            ],
-            correct: 2
-          }
-        ],
-        ops: [
-          {
-            q: "What’s a key skill in operations & logistics?",
-            options: [
-              "Random guessing",
-              "Keeping things organized and on schedule",
-              "Avoiding checklists",
-              "Never writing anything down"
-            ],
-            correct: 1
-          }
-        ],
-        life: [
-          {
-            q: "What’s a helpful first step in building stability?",
-            options: [
-              "Doing everything at once",
-              "Creating a simple, realistic routine",
-              "Ignoring your schedule",
-              "Waiting for motivation"
-            ],
-            correct: 1
-          }
-        ],
-        customer: [
-          {
-            q: "What’s a core part of good customer service?",
-            options: [
-              "Winning every argument",
-              "Listening and trying to understand the customer",
-              "Talking over the customer",
-              "Ignoring complaints"
-            ],
-            correct: 1
-          }
-        ]
-      };
+    // -----------------------------
+    // QUIZ ENGINE
+    // -----------------------------
+    const params = new URLSearchParams(window.location.search);
+    const lessonId = params.get("lesson");
 
-      const quiz = QUIZZES[quizId] || [];
-      const form = document.getElementById("quizForm");
-      const title = document.getElementById("quizTitle");
-      title.textContent = "Quiz for " + quizId;
+    const track = lessonId.split("-")[0]; // e.g. "foundations"
+    const quiz = QUIZZES[track];
 
-      if (!quiz.length) {
-        form.innerHTML = "<p>No quiz available for this lesson yet.</p>";
-        return;
-      }
+    let current = 0;
+    let score = 0;
 
-      // Render questions
-      quiz.forEach((item, index) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "space-md";
+    document.getElementById("quiz-title").innerText =
+      "Quiz: " + track.charAt(0).toUpperCase() + track.slice(1);
 
-        const q = document.createElement("p");
-        q.textContent = (index + 1) + ". " + item.q;
-        wrapper.appendChild(q);
+    function loadQuestion() {
+      const q = quiz[current];
+      document.getElementById("question-text").innerText = q.q;
 
-        item.options.forEach((opt, i) => {
-          const label = document.createElement("label");
-          label.style.display = "block";
+      const optionsBox = document.getElementById("options");
+      optionsBox.innerHTML = "";
 
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = "q" + index;
-          input.value = i;
-
-          label.appendChild(input);
-          label.append(" " + opt);
-          wrapper.appendChild(label);
-        });
-
-        form.appendChild(wrapper);
+      q.options.forEach((opt, index) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerText = opt;
+        btn.onclick = () => selectAnswer(index);
+        optionsBox.appendChild(btn);
       });
 
-      // Handle submit
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
+      document.getElementById("next-btn").style.display = "none";
+      document.getElementById("finish-btn").style.display = "none";
+    }
 
-        let correctCount = 0;
-        quiz.forEach((item, index) => {
-          const selected = form.querySelector(`input[name="q${index}"]:checked`);
-          if (selected && Number(selected.value) === item.correct) {
-            correctCount++;
-          }
-        });
+    function selectAnswer(index) {
+      const correct = quiz[current].correct;
+      const buttons = document.querySelectorAll(".option-btn");
 
-        const score = Math.round((correctCount / quiz.length) * 100);
-        document.getElementById("quizResult").textContent =
-          `You scored ${score}%. ${score >= 70 ? "Nice work — that’s a solid understanding." : "Review the lesson and try again."}`;
-
-        const progress = Pathlift.getProgress();
-        progress.quizScores[quizId] = score;
-        Pathlift.saveProgress(progress);
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === correct) btn.classList.add("correct");
+        if (i === index && index !== correct) btn.classList.add("wrong");
       });
-    });
+
+      if (index === correct) score++;
+
+      if (current < quiz.length - 1) {
+        document.getElementById("next-btn").style.display = "block";
+      } else {
+        document.getElementById("finish-btn").style.display = "block";
+      }
+    }
+
+    document.getElementById("next-btn").onclick = () => {
+      current++;
+      loadQuestion();
+    };
+
+    document.getElementById("finish-btn").onclick = () => {
+      document.getElementById("quiz-box").style.display = "none";
+      document.getElementById("result-box").style.display = "block";
+      document.getElementById("score-text").innerText =
+        `You scored ${score} out of ${quiz.length}.`;
+    };
+
+    function goBack() {
+      window.history.back();
+    }
+
+    loadQuestion();
   </script>
 </body>
 </html>
