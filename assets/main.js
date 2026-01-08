@@ -1,76 +1,82 @@
-// assets/main.js
-// Handles nav, user, tracks, lessons, and progress
+// ---------------------------------------------
+// PathLift Main Script
+// Handles: progress tracking, lesson completion,
+// quiz completion, and general utilities.
+// ---------------------------------------------
 
-// Simple mobile nav (if you add a toggle later)
-document.addEventListener("click", (e) => {
-  const toggle = e.target.closest("[data-nav-toggle]");
-  if (!toggle) return;
-  const nav = document.getElementById("primary-nav");
-  const expanded = toggle.getAttribute("aria-expanded") === "true";
-  toggle.setAttribute("aria-expanded", String(!expanded));
-  if (nav) nav.hidden = expanded;
-});
-
-// User helpers
-function getUser() {
-  const raw = localStorage.getItem("pathliftUser");
-  return raw ? JSON.parse(raw) : null;
-}
-
-function requireUser() {
-  const user = getUser();
-  if (!user) window.location.href = "join.html";
-  return user;
-}
-
-// Progress helpers
-function getProgress() {
-  const raw = localStorage.getItem("pathliftProgress");
-  return raw ? JSON.parse(raw) : { completedLessons: [], quizScores: {} };
-}
-
-function saveProgress(progress) {
-  localStorage.setItem("pathliftProgress", JSON.stringify(progress));
-}
-
+// Save lesson completion
 function markLessonComplete(lessonId) {
-  const progress = getProgress();
-  if (!progress.completedLessons.includes(lessonId)) {
-    progress.completedLessons.push(lessonId);
-    saveProgress(progress);
-  }
+  const key = `completed_${lessonId}`;
+  localStorage.setItem(key, "true");
 }
 
+// Check if a lesson is completed
 function isLessonComplete(lessonId) {
-  return getProgress().completedLessons.includes(lessonId);
+  return localStorage.getItem(`completed_${lessonId}`) === "true";
 }
 
-function setCurrentLesson(lessonId) {
-  localStorage.setItem("pathliftCurrentLesson", lessonId);
+// Save quiz score
+function saveQuizScore(lessonId, score, total) {
+  const key = `quiz_${lessonId}`;
+  localStorage.setItem(key, JSON.stringify({ score, total }));
 }
 
-function getCurrentLessonId() {
-  return localStorage.getItem("pathliftCurrentLesson");
+// Get quiz score
+function getQuizScore(lessonId) {
+  const data = localStorage.getItem(`quiz_${lessonId}`);
+  return data ? JSON.parse(data) : null;
 }
 
-function setCurrentQuiz(lessonId) {
-  localStorage.setItem("pathliftCurrentQuiz", lessonId);
+// Count completed lessons in a track
+function countCompletedLessons(track) {
+  let count = 0;
+  track.lessons.forEach(lesson => {
+    if (isLessonComplete(lesson.id)) count++;
+  });
+  return count;
 }
 
-function getCurrentQuizId() {
-  return localStorage.getItem("pathliftCurrentQuiz");
+// Count total completed lessons across all tracks
+function countAllCompletedLessons() {
+  let total = 0;
+  PATHLIFT_TRACKS.forEach(track => {
+    track.lessons.forEach(lesson => {
+      if (isLessonComplete(lesson.id)) total++;
+    });
+  });
+  return total;
 }
 
-// Expose globally for inline handlers and other pages
-window.Pathlift = {
-  getUser,
-  requireUser,
-  getProgress,
-  saveProgress,
-  markLessonComplete,
-  isLessonComplete,
-  setCurrentLesson,
-  getCurrentLessonId,
-  setCurrentQuiz,
-  getCurrentQuizId
-};
+// Get total number of lessons across all tracks
+function getTotalLessons() {
+  let total = 0;
+  PATHLIFT_TRACKS.forEach(track => {
+    total += track.lessons.length;
+  });
+  return total;
+}
+
+// Mark quiz as completed and mark lesson as completed
+function completeQuizAndLesson(lessonId, score, total) {
+  saveQuizScore(lessonId, score, total);
+  markLessonComplete(lessonId);
+}
+
+// Utility: Capitalize first letter
+function cap(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Utility: Get track object by ID
+function getTrackById(id) {
+  return PATHLIFT_TRACKS.find(t => t.id === id);
+}
+
+// Utility: Get lesson object by ID
+function getLessonById(lessonId) {
+  for (const track of PATHLIFT_TRACKS) {
+    const lesson = track.lessons.find(l => l.id === lessonId);
+    if (lesson) return lesson;
+  }
+  return null;
+}
