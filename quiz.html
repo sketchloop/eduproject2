@@ -33,25 +33,19 @@
     </div>
   </div>
 
-  <!-- LOAD QUIZ DATA -->
+  <!-- IMPORTANT: LOAD QUIZ DATA FIRST -->
   <script src="assets/quiz-data.js"></script>
 
+  <!-- QUIZ ENGINE -->
   <script>
-    // -----------------------------
-    // SAFETY CHECKS
-    // -----------------------------
     function showError(msg) {
       document.getElementById("quiz-box").style.display = "none";
       document.getElementById("result-box").style.display = "none";
-
       const box = document.getElementById("error-box");
       document.getElementById("error-text").innerText = msg;
       box.style.display = "block";
     }
 
-    // -----------------------------
-    // GET LESSON ID FROM URL
-    // -----------------------------
     const params = new URLSearchParams(window.location.search);
     const lessonId = params.get("lesson");
 
@@ -60,9 +54,6 @@
       throw new Error("Missing lesson ID");
     }
 
-    // -----------------------------
-    // DETERMINE TRACK NAME
-    // -----------------------------
     const track = lessonId.split("-")[0];
 
     if (!track) {
@@ -70,9 +61,6 @@
       throw new Error("Invalid lesson ID format");
     }
 
-    // -----------------------------
-    // LOAD QUIZ DATA FOR TRACK
-    // -----------------------------
     if (typeof QUIZZES === "undefined") {
       showError("Quiz data file (quiz-data.js) did not load.");
       throw new Error("QUIZZES is undefined");
@@ -90,9 +78,6 @@
       throw new Error("Quiz array empty");
     }
 
-    // -----------------------------
-    // QUIZ ENGINE
-    // -----------------------------
     let current = 0;
     let score = 0;
 
@@ -159,7 +144,6 @@
       window.history.back();
     }
 
-    // Start quiz
     loadQuestion();
   </script>
 </body>
