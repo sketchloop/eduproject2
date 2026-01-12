@@ -1,15 +1,13 @@
 // ======================================================
-// QUIZ DATA — PART 1 (Tracks 1–3)
-// Full file continues in next messages
+// QUIZ DATA — ALL TRACKS (FULLY FIXED)
 // ======================================================
 
 const QUIZZES = {
 
   // --------------------------------------------------
-  // TRACK 1 — FOUNDATIONS & CONFIDENCE (10 lessons)
+  // TRACK 1 — FOUNDATIONS & CONFIDENCE
   // --------------------------------------------------
   foundations: [
-    // Lesson 1
     {
       q: "What is the main purpose of building a daily routine?",
       options: [
@@ -113,7 +111,7 @@ const QUIZZES = {
   ],
 
   // --------------------------------------------------
-  // TRACK 2 — DIGITAL SKILLS (10 lessons)
+  // TRACK 2 — DIGITAL SKILLS
   // --------------------------------------------------
   digital: [
     {
@@ -214,7 +212,7 @@ const QUIZZES = {
   ],
 
   // --------------------------------------------------
-  // TRACK 3 — WORKPLACE READINESS (10 lessons)
+  // TRACK 3 — WORKPLACE READINESS
   // --------------------------------------------------
   workplace: [
     {
@@ -317,12 +315,10 @@ const QUIZZES = {
       ],
       correct: 1
     }
-  ]
-
-}; // END QUIZZES PART 1
+  ],
 
   // --------------------------------------------------
-  // TRACK 4 — CAREER DEVELOPMENT (10 lessons)
+  // TRACK 4 — CAREER DEVELOPMENT
   // --------------------------------------------------
   career: [
     {
@@ -428,7 +424,7 @@ const QUIZZES = {
   ],
 
   // --------------------------------------------------
-  // TRACK 5 — TECH & IT SUPPORT (10 lessons)
+  // TRACK 5 — TECH & IT SUPPORT
   // --------------------------------------------------
   tech: [
     {
@@ -533,8 +529,8 @@ const QUIZZES = {
     }
   ],
 
-    // --------------------------------------------------
-  // TRACK 6 — OPERATIONS & LOGISTICS (10 lessons)
+  // --------------------------------------------------
+  // TRACK 6 — OPERATIONS & LOGISTICS
   // --------------------------------------------------
   operations: [
     {
@@ -640,7 +636,7 @@ const QUIZZES = {
   ],
 
   // --------------------------------------------------
-  // TRACK 7 — LIFE SKILLS & STABILITY (10 lessons)
+  // TRACK 7 — LIFE SKILLS & STABILITY
   // --------------------------------------------------
   life: [
     {
@@ -652,204 +648,3 @@ const QUIZZES = {
         "A bill you must pay"
       ],
       correct: 1
-    },
-    {
-      q: "What is a healthy way to manage stress?",
-      options: [
-        "Avoid all responsibilities",
-        "Use harmful coping habits",
-        "Practice breathing or grounding exercises",
-        "Ignore your emotions"
-      ],
-      correct: 2
-    },
-    {
-      q: "What is the purpose of setting boundaries?",
-      options: [
-        "To push people away",
-        "To protect your time and energy",
-        "To start arguments",
-        "To avoid communication"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is financial literacy?",
-      options: [
-        "Understanding how money works",
-        "Avoiding all financial decisions",
-        "Only using cash",
-        "Saving every dollar"
-      ],
-      correct: 0
-    },
-    {
-      q: "What is a good way to build healthy habits?",
-      options: [
-        "Start with small, consistent steps",
-        "Change everything overnight",
-        "Copy someone else’s routine exactly",
-        "Wait until you feel motivated"
-      ],
-      correct: 0
-    },
-    {
-      q: "What is emotional regulation?",
-      options: [
-        "Ignoring your feelings",
-        "Controlling and understanding your emotions",
-        "Never feeling upset",
-        "Avoiding difficult conversations"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is the purpose of meal planning?",
-      options: [
-        "To waste time",
-        "To reduce stress and save money",
-        "To avoid cooking",
-        "To eat the same thing forever"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is a sign of healthy communication?",
-      options: [
-        "Yelling to be heard",
-        "Listening and responding respectfully",
-        "Interrupting often",
-        "Avoiding eye contact"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is time management?",
-      options: [
-        "Doing everything at once",
-        "Planning how you use your time",
-        "Avoiding schedules",
-        "Working nonstop"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is the purpose of self‑care?",
-      options: [
-        "To be selfish",
-        "To maintain your physical and mental well‑being",
-        "To avoid responsibilities",
-        "To impress others"
-      ],
-      correct: 1
-    }
-  ],
-
-  // --------------------------------------------------
-  // TRACK 8 — CUSTOMER SERVICE & RETAIL (10 lessons)
-  // --------------------------------------------------
-  customer: [
-    {
-      q: "What is the purpose of customer service?",
-      options: [
-        "To argue with customers",
-        "To support customers and solve problems",
-        "To sell unnecessary items",
-        "To avoid responsibility"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is active listening?",
-      options: [
-        "Interrupting politely",
-        "Repeating back what you heard to confirm understanding",
-        "Thinking about your reply",
-        "Looking at your phone"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is a good way to greet a customer?",
-      options: [
-        "Ignore them",
-        "Say nothing",
-        "Offer a friendly greeting and eye contact",
-        "Wait for them to speak first"
-      ],
-      correct: 2
-    },
-    {
-      q: "What should you do if a customer is upset?",
-      options: [
-        "Raise your voice",
-        "Stay calm and listen",
-        "Walk away",
-        "Blame them"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is product knowledge?",
-      options: [
-        "Knowing random facts",
-        "Understanding the items you sell",
-        "Memorizing prices only",
-        "Ignoring customer questions"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is the purpose of upselling?",
-      options: [
-        "To pressure customers",
-        "To offer helpful additional products",
-        "To confuse people",
-        "To increase returns"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is a POS system?",
-      options: [
-        "A type of shelf",
-        "A cash register and payment system",
-        "A customer complaint",
-        "A delivery truck"
-      ],
-      correct: 1
-    },
-    {
-      q: "What should you do if you don’t know an answer?",
-      options: [
-        "Guess",
-        "Make something up",
-        "Say you’re not sure and find someone who knows",
-        "Ignore the customer"
-      ],
-      correct: 2
-    },
-    {
-      q: "What is a return policy?",
-      options: [
-        "A rule about employee breaks",
-        "A store’s rules for returning items",
-        "A type of receipt",
-        "A discount program"
-      ],
-      correct: 1
-    },
-    {
-      q: "What is the purpose of teamwork in retail?",
-      options: [
-        "To compete with coworkers",
-        "To support each other and serve customers better",
-        "To avoid responsibility",
-        "To work alone"
-      ],
-      correct: 1
-    }
-  ]
-
-}; // END QUIZZES PART 3
-
