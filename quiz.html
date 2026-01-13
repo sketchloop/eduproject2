@@ -30,8 +30,8 @@
     <div id="result"></div>
   </div>
 
-  <!-- IMPORTANT: Load the updated JS file -->
-  <script src="./quiz-data-v2.js"></script>
+  <!-- Correct path to your data file inside /assets -->
+  <script src="./assets/quiz-data-help-me-jesus-christ.js?v=1"></script>
 
   <script>
     (function () {
@@ -52,7 +52,7 @@
 
       // Validate QUIZZES
       if (typeof QUIZZES === "undefined" || QUIZZES === null || typeof QUIZZES !== "object") {
-        showError("Quiz data file (quiz-data-v2.js) did not load or QUIZZES is not defined.");
+        showError("Quiz data file (quiz-data-help-me-jesus-christ.js) did not load or QUIZZES is not defined.");
         return;
       }
 
