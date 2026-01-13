@@ -2,11 +2,6 @@
 // QUIZ DATA — ALL TRACKS (FULLY FIXED)
 // ======================================================
 
-const QUIZZES = {
-
-  // --------------------------------------------------
-  // TRACK 1 — FOUNDATIONS & CONFIDENCE
-  // --------------------------------------------------
   foundations: [
     {
       q: "What is the main purpose of building a daily routine?",
@@ -110,9 +105,6 @@ const QUIZZES = {
     }
   ],
 
-  // --------------------------------------------------
-  // TRACK 2 — DIGITAL SKILLS
-  // --------------------------------------------------
   digital: [
     {
       q: "Which email address looks most professional?",
@@ -211,9 +203,7 @@ const QUIZZES = {
     }
   ],
 
-  // --------------------------------------------------
-  // TRACK 3 — WORKPLACE READINESS
-  // --------------------------------------------------
+
   workplace: [
     {
       q: "What’s a good response if you don’t understand instructions?",
@@ -317,9 +307,6 @@ const QUIZZES = {
     }
   ],
 
-  // --------------------------------------------------
-  // TRACK 4 — CAREER DEVELOPMENT
-  // --------------------------------------------------
   career: [
     {
       q: "What is the purpose of a resume?",
@@ -635,16 +622,105 @@ const QUIZZES = {
     }
   ],
 
-  // --------------------------------------------------
-  // TRACK 7 — LIFE SKILLS & STABILITY
-  // --------------------------------------------------
-  life: [
+   life: [
     {
       q: "What is a budget?",
       options: [
-        "A list of things you want",
         "A plan for how you use your money",
+        "A list of things you want",
         "A type of bank account",
         "A bill you must pay"
       ],
+      correct: 0
+    },
+    {
+      q: "What is the first step in solving a problem?",
+      options: [
+        "Ignore it",
+        "Identify the issue clearly",
+        "Blame someone else",
+        "Wait for it to fix itself"
+      ],
       correct: 1
+    },
+    {
+      q: "What is a healthy way to manage stress?",
+      options: [
+        "Avoid sleep",
+        "Use deep breathing or short breaks",
+        "Yell at others",
+        "Quit everything"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is emotional intelligence?",
+      options: [
+        "Ignoring your feelings",
+        "Understanding and managing emotions",
+        "Always being happy",
+        "Controlling others"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is a good way to build healthy habits?",
+      options: [
+        "Change everything at once",
+        "Start with small, consistent actions",
+        "Wait for motivation",
+        "Copy what others do"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is the purpose of meal planning?",
+      options: [
+        "To waste time",
+        "To save money and eat healthier",
+        "To avoid cooking",
+        "To make meals complicated"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is a sign of good decision‑making?",
+      options: [
+        "Acting without thinking",
+        "Considering consequences before acting",
+        "Letting others decide for you",
+        "Choosing the fastest option"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is time management?",
+      options: [
+        "Trying to do everything at once",
+        "Using your time wisely to meet goals",
+        "Avoiding schedules",
+        "Only working when you feel like it"
+      ],
+      correct: 1
+    },
+    {
+      q: "What should you do when you feel overwhelmed?",
+      options: [
+        "Shut down completely",
+        "Break tasks into smaller steps",
+        "Take on more tasks",
+        "Ignore your feelings"
+      ],
+      correct: 1
+    },
+    {
+      q: "What is the purpose of setting boundaries?",
+      options: [
+        "To push people away",
+        "To protect your time and well‑being",
+        "To avoid responsibility",
+        "To control others"
+      ],
+      correct: 1
+    }
+  ],
