@@ -2,6 +2,8 @@
 // QUIZ DATA — ALL TRACKS (FULLY FIXED)
 // ======================================================
 
+const QUIZZES = {
+
   foundations: [
     {
       q: "What is the main purpose of building a daily routine?",
@@ -724,3 +726,4 @@
       correct: 1
     }
   ],
+};
