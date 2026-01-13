@@ -2,149 +2,137 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quiz</title>
-  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 40px auto; }
+    .hidden { display: none; }
+    .error { color: red; margin-bottom: 16px; }
+    .question { font-weight: bold; margin-bottom: 8px; }
+    .options button { display: block; margin: 4px 0; }
+    #result { margin-top: 20px; font-weight: bold; }
+  </style>
 </head>
-
 <body>
-  <div class="container">
-    <button onclick="goBack()" class="back-btn">← Back</button>
+  <h1>Quiz</h1>
 
-    <h1 id="quiz-title">Quiz</h1>
+  <div id="error" class="error hidden"></div>
 
-    <div id="quiz-box">
-      <p id="question-text"></p>
-      <div id="options"></div>
-
-      <button id="next-btn" style="display:none;">Next Question</button>
-      <button id="finish-btn" style="display:none;">Finish Quiz</button>
-    </div>
-
-    <div id="result-box" style="display:none;">
-      <h2>Your Score</h2>
-      <p id="score-text"></p>
-      <button onclick="goBack()">Back to Lesson</button>
-    </div>
-
-    <div id="error-box" style="display:none; margin-top:20px;">
-      <h2>Error</h2>
-      <p id="error-text"></p>
-    </div>
+  <div>
+    <label for="trackSelect"><strong>Select track:</strong></label>
+    <select id="trackSelect"></select>
+    <button id="startBtn">Start Quiz</button>
   </div>
 
-  <!-- IMPORTANT: LOAD QUIZ DATA FIRST -->
-  <script src="assets/quiz-data.js"></script>
+  <div id="quizContainer" class="hidden">
+    <div id="question" class="question"></div>
+    <div id="options" class="options"></div>
+    <button id="nextBtn" class="hidden">Next</button>
+    <div id="result"></div>
+  </div>
 
-  <!-- QUIZ ENGINE -->
+  <!-- IMPORTANT: quiz-data.js MUST be loaded BEFORE this script -->
+  <script src="quiz-data.js"></script>
+
   <script>
-    function showError(msg) {
-      document.getElementById("quiz-box").style.display = "none";
-      document.getElementById("result-box").style.display = "none";
-      const box = document.getElementById("error-box");
-      document.getElementById("error-text").innerText = msg;
-      box.style.display = "block";
-    }
+    (function () {
+      const errorEl = document.getElementById("error");
+      const trackSelect = document.getElementById("trackSelect");
+      const startBtn = document.getElementById("startBtn");
+      const quizContainer = document.getElementById("quizContainer");
+      const questionEl = document.getElementById("question");
+      const optionsEl = document.getElementById("options");
+      const nextBtn = document.getElementById("nextBtn");
+      const resultEl = document.getElementById("result");
 
-    const params = new URLSearchParams(window.location.search);
-    const lessonId = params.get("lesson");
+      function showError(msg) {
+        errorEl.textContent = msg;
+        errorEl.classList.remove("hidden");
+        quizContainer.classList.add("hidden");
+      }
 
-    if (!lessonId) {
-      showError("No lesson was provided. The quiz cannot load.");
-      throw new Error("Missing lesson ID");
-    }
-
-    const track = lessonId.split("-")[0];
-
-    if (!track) {
-      showError("Invalid lesson format. Expected something like 'foundations-1'.");
-      throw new Error("Invalid lesson ID format");
-    }
-
-    if (typeof QUIZZES === "undefined") {
-      showError("Quiz data file (quiz-data.js) did not load.");
-      throw new Error("QUIZZES is undefined");
-    }
-
-    const quiz = QUIZZES[track];
-
-    if (!quiz) {
-      showError(`No quiz found for track: "${track}". Check quiz-data.js.`);
-      throw new Error("Quiz not found for track");
-    }
-
-    if (!Array.isArray(quiz) || quiz.length === 0) {
-      showError(`Quiz for track "${track}" is empty.`);
-      throw new Error("Quiz array empty");
-    }
-
-    let current = 0;
-    let score = 0;
-
-    document.getElementById("quiz-title").innerText =
-      "Quiz: " + track.charAt(0).toUpperCase() + track.slice(1);
-
-    function loadQuestion() {
-      const q = quiz[current];
-
-      if (!q || !q.q) {
-        showError("A quiz question is missing or incorrectly formatted.");
+      // 1. Validate that QUIZZES exists and is usable
+      if (typeof QUIZZES === "undefined" || QUIZZES === null || typeof QUIZZES !== "object") {
+        showError("Quiz data file (quiz-data.js) did not load or QUIZZES is not defined.");
         return;
       }
 
-      document.getElementById("question-text").innerText = q.q;
-
-      const optionsBox = document.getElementById("options");
-      optionsBox.innerHTML = "";
-
-      q.options.forEach((opt, index) => {
-        const btn = document.createElement("button");
-        btn.className = "option-btn";
-        btn.innerText = opt;
-        btn.onclick = () => selectAnswer(index);
-        optionsBox.appendChild(btn);
-      });
-
-      document.getElementById("next-btn").style.display = "none";
-      document.getElementById("finish-btn").style.display = "none";
-    }
-
-    function selectAnswer(index) {
-      const correct = quiz[current].correct;
-      const buttons = document.querySelectorAll(".option-btn");
-
-      buttons.forEach((btn, i) => {
-        btn.disabled = true;
-        if (i === correct) btn.classList.add("correct");
-        if (i === index && index !== correct) btn.classList.add("wrong");
-      });
-
-      if (index === correct) score++;
-
-      if (current < quiz.length - 1) {
-        document.getElementById("next-btn").style.display = "block";
-      } else {
-        document.getElementById("finish-btn").style.display = "block";
+      const tracks = Object.keys(QUIZZES);
+      if (!tracks.length) {
+        showError("No quiz tracks found in QUIZZES.");
+        return;
       }
-    }
 
-    document.getElementById("next-btn").onclick = () => {
-      current++;
-      loadQuestion();
-    };
+      // 2. Populate track dropdown
+      tracks.forEach((key) => {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = key;
+        trackSelect.appendChild(opt);
+      });
 
-    document.getElementById("finish-btn").onclick = () => {
-      document.getElementById("quiz-box").style.display = "none";
-      document.getElementById("result-box").style.display = "block";
-      document.getElementById("score-text").innerText =
-        `You scored ${score} out of ${quiz.length}.`;
-    };
+      let currentTrack = null;
+      let currentIndex = 0;
+      let score = 0;
+      let answered = false;
 
-    function goBack() {
-      window.history.back();
-    }
+      function renderQuestion() {
+        if (!currentTrack || currentIndex >= currentTrack.length) {
+          questionEl.textContent = "Quiz complete!";
+          optionsEl.innerHTML = "";
+          nextBtn.classList.add("hidden");
+          resultEl.textContent = "Your score: " + score + " / " + currentTrack.length;
+          return;
+        }
 
-    loadQuestion();
+        const q = currentTrack[currentIndex];
+        questionEl.textContent = q.q;
+        optionsEl.innerHTML = "";
+        resultEl.textContent = "";
+        answered = false;
+
+        q.options.forEach((optText, idx) => {
+          const btn = document.createElement("button");
+          btn.textContent = optText;
+          btn.addEventListener("click", () => {
+            if (answered) return;
+            answered = true;
+            if (idx === q.correct) {
+              score++;
+              resultEl.textContent = "Correct!";
+            } else {
+              resultEl.textContent = "Incorrect.";
+            }
+            nextBtn.classList.remove("hidden");
+          });
+          optionsEl.appendChild(btn);
+        });
+      }
+
+      startBtn.addEventListener("click", () => {
+        const selectedKey = trackSelect.value;
+        const trackData = QUIZZES[selectedKey];
+
+        if (!Array.isArray(trackData) || !trackData.length) {
+          showError("Selected track has no questions or is invalid.");
+          return;
+        }
+
+        errorEl.classList.add("hidden");
+        quizContainer.classList.remove("hidden");
+
+        currentTrack = trackData;
+        currentIndex = 0;
+        score = 0;
+        nextBtn.classList.add("hidden");
+        renderQuestion();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        currentIndex++;
+        nextBtn.classList.add("hidden");
+        renderQuestion();
+      });
+    })();
   </script>
 </body>
 </html>
