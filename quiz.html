@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <title>Quiz</title>
+
+  <!-- Correct CSS path -->
+  <link rel="stylesheet" href="./assets/style.css?v=1">
+
   <style>
+    /* Fallback styling in case CSS fails to load */
     body { font-family: sans-serif; max-width: 700px; margin: 40px auto; }
     .hidden { display: none; }
     .error { color: red; margin-bottom: 16px; }
@@ -30,7 +35,7 @@
     <div id="result"></div>
   </div>
 
-  <!-- Correct path to your data file inside /assets -->
+  <!-- Correct JS path -->
   <script src="./assets/quiz-data-help-me-jesus-christ.js?v=1"></script>
 
   <script>
